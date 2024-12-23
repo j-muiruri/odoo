@@ -1,0 +1,31 @@
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="estate_property_type_list">
+            <field name="name">Property Types</field>
+            <field name="model">estate.property.type</field>
+            <field name="arch" type="xml">
+                <list>
+                    <field name="name" nolabel="True" string="Title" />
+                </list>
+            </field>
+
+        </record>
+
+        <!-- Form view definition -->
+
+        <record model="ir.ui.view" id="estate_property_type_form">
+            <field name="name">estate.property.view.form</field>
+            <field name="model">estate.property.type</field>
+            <field name="arch" type="xml">
+                <form string="Estate Property" create="True" edit="True">
+                    <sheet>
+                        <group name="name">
+                            <field name="name" nolabel="1" class="h1" />
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+    </data>
+</odoo>
