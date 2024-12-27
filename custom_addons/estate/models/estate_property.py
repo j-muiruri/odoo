@@ -53,6 +53,43 @@ class EstateProperty(models.Model):
         required=True,
     )
 
+    user_id = fields.Many2one(
+        'res.users',
+        string='Salesperson',
+        default=lambda self: self.env.user.id
+    )
+    buyer_id = fields.Many2one(
+        'res.partner',
+        string='Buyer',
+        copy=False
+    )
+
+    tag_ids = fields.Many2many(
+        'estate.property.tag',
+        string='Tag',
+        required=True,
+    )
+    offer_ids = fields.One2many(
+        'estate.property.offer',
+        'property_id',
+        string='Offers',
+        copy=False,
+    )
+    total_area = fields.Float(compute='_compute_total_area')
+    best_price = fields.Float(compute='_compute_best_price')
+
+    @api.depends('living_area', 'garden_area')
+    def _compute_total_area(self):
+        for property in self:
+            property.total_area = property.living_area + property.garden_area
+
+    @api.depends('offer_ids.price')
+    def _compute_best_price(self):
+        for property in self:
+            # property.best_price = max(offer.price for offer in property.offer_ids)
+            property.best_price = max(property.offer_ids.mapped('price')) if property.offer_ids else 0.0
+
+    # @api.onchange('garden')
     # def action_create_estate_property(self):
     #     return {
     #         'name': ('Create Property'),

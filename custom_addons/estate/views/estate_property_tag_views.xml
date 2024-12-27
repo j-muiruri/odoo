@@ -1,8 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <data>
-        <record model="ir.ui.view" id="estate_property_type_list">
-            <field name="name">Property Types</field>
-            <field name="model">estate.property.type</field>
+
+    <record model="ir.ui.view" id="estate_property_tag_list">
+            <field name="name">Property Tags</field>
+            <field name="model">estate.property.tag</field>
             <field name="arch" type="xml">
                 <list>
                     <field name="name" nolabel="True" string="Title" />
@@ -13,9 +14,9 @@
 
         <!-- Form view definition -->
 
-        <record model="ir.ui.view" id="estate_property_type_form">
-            <field name="name">Property Types</field>
-            <field name="model">estate.property.type</field>
+        <record model="ir.ui.view" id="estate_property_tag_form">
+            <field name="name">Property Tag</field>
+            <field name="model">estate.property.tag</field>
             <field name="arch" type="xml">
                 <form string="Estate Property Tag" create="True" edit="True">
                     <sheet>
@@ -27,5 +28,4 @@
             </field>
         </record>
 
-    </data>
 </odoo>
