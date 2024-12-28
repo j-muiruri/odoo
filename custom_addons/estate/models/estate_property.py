@@ -3,6 +3,8 @@
 from odoo import models, fields, api
 from odoo.tools.date_utils import relativedelta
 
+from odoo.exceptions import UserError, ValidationError
+
 
 class EstateProperty(models.Model):
     _name = 'estate.property'
@@ -89,13 +91,22 @@ class EstateProperty(models.Model):
             # property.best_price = max(offer.price for offer in property.offer_ids)
             property.best_price = max(property.offer_ids.mapped('price')) if property.offer_ids else 0.0
 
-    # @api.onchange('garden')
-    # def action_create_estate_property(self):
-    #     return {
-    #         'name': ('Create Property'),
-    #         'view_mode': 'list,form',
-    #         'domain': [('estate_property', 'in', self.ids)],
-    #         'res_model': 'estate.property',
-    #         'type': 'ir.actions.act_window',
-    #         'context': {'create': False, 'active_test': False},
-    #     }
+    @api.onchange('garden')
+    def _onchange_garden(self):
+            self.garden_area = 10 if self.garden else 0
+            self.garden_orientation = 'north' if self.garden else False
+            
+    def action_sell_property(self):
+        for property in self:
+            if property.state == 'cancelled':
+                raise UserError("Cancelled property cannot be sold") 
+            else:
+                property.state = 'sold'
+        
+    def action_cancel_property(self):
+        for property in self:
+            if property.state == 'sold':
+                raise UserError("Sold property cannot be canceled") 
+            else:
+                property.state = 'cancelled'
+    

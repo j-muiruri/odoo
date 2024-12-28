@@ -8,6 +8,7 @@
       <field name="arch" type="xml">
         <list>
           <field name="name" string="Title" />
+          <field name="state" string="Status" />
           <field name="property_type_id" />
           <field name="tag_ids" />
           <field name="postcode" />
@@ -27,6 +28,10 @@
       <field name="model">estate.property</field>
       <field name="arch" type="xml">
         <form string="Estate Property" create="True" edit="True">
+          <header>
+            <button name="action_sell_property" type="object" string="Sold" />
+            <button name="action_cancel_property" type="object" string="Cancel" />
+          </header>
           <sheet>
             <!-- <div class="oe_button_box" name="button_box">
               <button type="action" class="oe_stat_button" icon="fa-">
@@ -47,13 +52,14 @@
             </group>
             <group>
               <group>
+                <field name="state" string="Status" invisible="state not in ['sold','cancelled']" readonly="1"/>
                 <field name="property_type_id" class='text-primary' />
                 <field name="postcode" />
                 <field name="date_availability" string="Availabile From" />
               </group>
               <group>
                 <field name="expected_price" />
-                <field name="best_price"  string="Best Offer"/> 
+                <field name="best_price" string="Best Offer" />
                 <field name="selling_price" />
               </group>
             </group>
