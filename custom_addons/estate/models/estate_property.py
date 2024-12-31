@@ -2,13 +2,19 @@
 
 from odoo import models, fields, api
 from odoo.tools.date_utils import relativedelta
-
+from odoo.tools import float_utils
 from odoo.exceptions import UserError, ValidationError
 
 
 class EstateProperty(models.Model):
     _name = 'estate.property'
     _description = 'Real Estate Property'
+    _order = 'id desc'
+
+    _check_selling_price = models.Constraint(
+        'check(selling_price>0)', 'The selling price must be strictly positive')
+    _check_expected_price = models.Constraint(
+        'check(expected_price>0)', 'The expected price must be strictly positive')
 
     name = fields.Char(required=True)
     description = fields.Text()
@@ -89,24 +95,36 @@ class EstateProperty(models.Model):
     def _compute_best_price(self):
         for property in self:
             # property.best_price = max(offer.price for offer in property.offer_ids)
-            property.best_price = max(property.offer_ids.mapped('price')) if property.offer_ids else 0.0
+            property.best_price = max(property.offer_ids.mapped(
+                'price')) if property.offer_ids else 0.0
 
     @api.onchange('garden')
     def _onchange_garden(self):
-            self.garden_area = 10 if self.garden else 0
-            self.garden_orientation = 'north' if self.garden else False
-            
+        self.garden_area = 10 if self.garden else 0
+        self.garden_orientation = 'north' if self.garden else False
+
     def action_sell_property(self):
         for property in self:
             if property.state == 'cancelled':
-                raise UserError("Cancelled property cannot be sold") 
+                raise UserError("Cancelled property cannot be sold")
             else:
                 property.state = 'sold'
-        
+        return True
+
     def action_cancel_property(self):
         for property in self:
             if property.state == 'sold':
-                raise UserError("Sold property cannot be canceled") 
+                raise UserError("Sold property cannot be canceled")
             else:
                 property.state = 'cancelled'
-    
+        return True
+
+    @api.constrains('selling_price')
+    def _check_selling_price(self):
+        for property in self:
+            percentage = property.selling_price/property.expected_price * 100
+            compare = float_utils.float_compare(percentage, 90.00, 10)
+            if compare == -1:
+                raise ValidationError(
+                    "Selling price should be atleast 90% of the expected price")
+            return True
