@@ -10,7 +10,6 @@ class EstatePropertyOffer(models.Model):
     _description = 'Real Estate Property Offer'
     _order = 'price desc'
 
-    
     @api.constrains('price')
     def _check_offer_price(self):
         for offer in self:
@@ -38,6 +37,12 @@ class EstatePropertyOffer(models.Model):
     validity = fields.Integer(default=7)
     date_deadline = fields.Date(
         compute='_compute_date_deadline', inverse='_inverse_date_deadline')
+
+    property_type_id = fields.Many2one(
+        related='property_id.property_type_id',
+        string='Property Type',
+        store=True
+    )
 
     @api.depends('validity')
     def _compute_date_deadline(self):
@@ -100,5 +105,3 @@ class EstatePropertyOffer(models.Model):
             offer.property_id.buyer_id = ''
 
         return True
-    
-    
