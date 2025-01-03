@@ -1,0 +1,63 @@
+<odoo>
+  <data>
+    <!-- an inheritance of the users’ view -->
+
+    <record id="property_users_res_users" model="ir.ui.view">
+      <field name="name">res.users.view.form.property.users</field>
+      <field name="model">res.users</field>
+      <field name="inherit_id" ref="base.view_users_form" />
+      <field name="arch" type="xml">
+        <page name="preferences" position="after">
+          <page name="properties" string="Properties">
+            <group>
+              <field name="property_ids" />
+            </group>
+          </page>
+        </page>
+      </field>
+    </record>
+
+
+    <!-- actions opening views on models -->
+    <!--
+    <record model="ir.actions.act_window" id="property_users.action_window">
+      <field name="name">property_users window</field>
+      <field name="res_model">property_users.property_users</field>
+      <field name="view_mode">list,form</field>
+    </record>
+-->
+
+    <!-- server action to the one above -->
+    <!--
+    <record model="ir.actions.server" id="property_users.action_server">
+      <field name="name">property_users server</field>
+      <field name="model_id" ref="model_property_users_property_users"/>
+      <field name="state">code</field>
+      <field name="code">
+        action = {
+          "type": "ir.actions.act_window",
+          "view_mode": "list,form",
+          "res_model": model._name,
+        }
+      </field>
+    </record>
+-->
+
+    <!-- Top menu item -->
+    <!--
+    <menuitem name="property_users" id="property_users.menu_root"/>
+-->
+    <!-- menu categories -->
+    <!--
+    <menuitem name="Menu 1" id="property_users.menu_1" parent="property_users.menu_root"/>
+    <menuitem name="Menu 2" id="property_users.menu_2" parent="property_users.menu_root"/>
+-->
+    <!-- actions -->
+    <!--
+    <menuitem name="List" id="property_users.menu_1_list" parent="property_users.menu_1"
+              action="property_users.action_window"/>
+    <menuitem name="Server to list" id="property_users" parent="property_users.menu_2"
+              action="property_users.action_server"/>
+-->
+  </data>
+</odoo>

@@ -3,6 +3,7 @@ from odoo import models, fields, api
 from odoo.tools.date_utils import relativedelta
 from datetime import datetime, date, timedelta
 from odoo.exceptions import ValidationError
+import locale
 
 
 class EstatePropertyOffer(models.Model):
@@ -77,6 +78,7 @@ class EstatePropertyOffer(models.Model):
                     raise ValidationError(
                         "An accepted offer already exists for the current property" % record.property_id)
 
+    @api.model
     def write(self, vals):
         # Check before writing if the value is being updated
         if 'status' in vals and vals['status'] == 'accepted':
@@ -88,6 +90,7 @@ class EstatePropertyOffer(models.Model):
             if existing_records:
                 raise ValidationError(
                     "An accepted offer already exists for the current property" % self.property_id)
+
         return super(EstatePropertyOffer, self).write(vals)
 
     def action_accept_offer(self):
@@ -105,3 +108,27 @@ class EstatePropertyOffer(models.Model):
             offer.property_id.buyer_id = ''
 
         return True
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        records = []
+        for vals in vals_list:
+            # Check if the property is already sold
+            estate_property = self.env['estate.property'].browse(vals['property_id'])
+            if estate_property.state == 'sold':
+                raise ValidationError("Cannot create an offer for a sold property.")
+            
+            # Set the property state to 'offer-received' when a new offer is created.
+            self.env['estate.property'].browse(vals['property_id']).state = 'offer-received'
+            
+            minimum_offer_price = self.search([
+                ('property_id', '=', vals['property_id'])
+            ],
+                order='price asc', limit=1)
+            
+            if vals['price'] < minimum_offer_price.price:
+                raise ValidationError(
+                    "The offer price must be greater than or equal to the minimum offer price of " + locale.format_string("%.2f", minimum_offer_price.price, grouping=True))
+            records.append(vals)
+                
+        return super().create(records)

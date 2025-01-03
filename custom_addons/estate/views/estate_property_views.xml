@@ -6,7 +6,7 @@
       <field name="name">Properties</field>
       <field name="model">estate.property</field>
       <field name="arch" type="xml">
-        <list editable="top" decoration-success="state in ['offer-received', 'offer-accepted']"
+        <list  decoration-success="state in ['offer-received', 'offer-accepted']"
           decoration-bf="'state'== 'offer-accepted'" decoration-muted="'state'=='sold'">
           <field name="name" string="Title" />
           <field name="state" string="Status" />
@@ -121,7 +121,7 @@
           <field name="facades" />
           <separator />
           <filter string="Available" name="available"
-            domain="[ '|', ('state', '=', 'new'), ('state', 'in', ['offer-accepted','sold'])]" />
+            domain="[ '|', ('state', '=', 'new'), ('state', 'in', ['offer-received'])]" />
           <group expand="1" string="Group By">
             <filter string="Postal Code " name="postcode" context="{'group_by':'postcode'}" />
           </group>
