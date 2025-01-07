@@ -6,7 +6,7 @@
       <field name="name">Properties</field>
       <field name="model">estate.property</field>
       <field name="arch" type="xml">
-        <list  decoration-success="state in ['offer-received', 'offer-accepted']"
+        <list decoration-success="state in ['offer-received', 'offer-accepted']"
           decoration-bf="'state'== 'offer-accepted'" decoration-muted="'state'=='sold'">
           <field name="name" string="Title" />
           <field name="state" string="Status" />
@@ -20,6 +20,36 @@
           <field name="selling_price" width="100px" />
           <field name="date_availability" string="Availabile From" width="100px" optional="hide" />
         </list>
+      </field>
+    </record>
+
+    <!-- Kanban view definition -->
+    <record id="estate_property_kanban" model="ir.ui.view">
+      <field name="name">Properties</field>
+      <field name="model">estate.property</field>
+      <field name="arch" type="xml">
+        <kanban default_group_by="property_type_id" records_draggable="False">
+          <field name="state" />
+          <field name="offer_ids" />
+          <templates>
+            <t t-name="card">
+              <field name="name" style="font-weight: bold !important;" />
+              <div>
+                Expected Price: 
+                <field string="Expected Price" name="expected_price" />
+              </div>
+              <div t-if="record.best_price.raw_value">
+                Best Offer: 
+                <field string="Best Offer" name="best_price" />
+              </div>
+              <div t-if="record.selling_price.raw_value">
+                Selling Price: 
+                <field string="Selling Price" name="selling_price" />
+              </div>
+              <field name="tag_ids" widget="many2many_tags" />
+            </t>
+          </templates>
+        </kanban>
       </field>
     </record>
 

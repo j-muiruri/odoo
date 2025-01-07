@@ -2,6 +2,7 @@
 
 from odoo import models, fields, api
 from odoo.exceptions import UserError, ValidationError
+import datetime;
 
 
 class EstateProperty(models.Model):
@@ -18,7 +19,7 @@ class EstateProperty(models.Model):
         invoice = {
             'partner_id': self.buyer_id.id,
             'move_type': 'out_invoice',
-            # 'state': 'draft',
+            'name': 'EPRP/' + datetime.datetime.now().strftime('%Y') + str(self.id),
             'amount_total': self.selling_price,
             'date': fields.Date.today(),
             'invoice_line_ids': [
